@@ -430,32 +430,108 @@ function inicializarFormularios() {
 }
 
 // ==========================================
-// 3. MÓDULO EMPRESARIAL (POSTULACIONES Y CV REAL)
+// 3. DASHBOARD EMPRESARIAL, CONTROL DE OFERTAS Y DECISIÓN DE CANDIDATOS
 // ==========================================
 async function cargarPostulacionesEmpresa() {
-  const tbody = document.querySelector('#tab-postulaciones tbody');
-  if (!tbody) return;
-  const res = await fetch(`${API_URL}/postulaciones`);
-  const lista = await res.json();
+  const sesion = JSON.parse(localStorage.getItem('usuarioPortal'));
+  const idUsuario = sesion ? sesion.idUsuario : 2;
 
-  tbody.innerHTML = lista.map((p) => {
-    const enlaceCv = p.candidato.cvNombreArchivo
-      ? `<a href="/uploads/cv/${p.candidato.cvNombreArchivo}" target="_blank" class="text-danger text-decoration-none fw-medium"><i class="bi bi-file-earmark-pdf-fill me-1"></i>Ver CV (.pdf)</a>`
-      : `<span class="text-muted small">Sin CV adjunto</span>`;
+  const res = await fetch(`${API_URL}/empresa/dashboard/${idUsuario}`);
+  if (!res.ok) return;
+  const data = await res.json();
 
-    return `
-      <tr>
-        <td class="fw-bold">${p.candidato.nombre} ${p.candidato.apellidoRazon}</td>
-        <td>${p.vacante.titulo}</td>
-        <td>${new Date(p.fechaPostulacion).toLocaleDateString()}</td>
-        <td>${enlaceCv}</td>
-        <td><span class="badge ${p.estado === 'Preseleccionada' ? 'bg-success' : 'bg-warning text-dark'}">${p.estado}</span></td>
-        <td>
-          <button class="btn btn-outline-success btn-sm py-0" onclick="cambiarEstadoPostulacion(${p.idPostulacion}, 'Preseleccionada')">Preseleccionar</button>
-        </td>
-      </tr>
-    `;
-  }).join('');
+  // 1. Actualizar KPIs del Dashboard
+  document.getElementById('titulo-dashboard-empresa').textContent = `Dashboard — ${data.empresa.nombre_empresa}`;
+  document.getElementById('kpi-vacantes-activas').textContent = data.metricas.vacantesActivas;
+  document.getElementById('kpi-vacantes-inactivas').textContent = data.metricas.vacantesInactivas;
+  document.getElementById('kpi-postulaciones-total').textContent = data.metricas.totalPostulaciones;
+  document.getElementById('kpi-candidatos-aceptados').textContent = data.metricas.candidatosAceptados;
+  document.getElementById('badge-count-ofertas').textContent = data.vacantes.length;
+  document.getElementById('badge-count-postulaciones').textContent = data.postulaciones.length;
+
+  // 2. Renderizar tabla "Mis Ofertas" (Inactivar/Reactivar y Eliminar)
+  const tbodyOfertas = document.getElementById('tbody-mis-ofertas');
+  if (tbodyOfertas) {
+    tbodyOfertas.innerHTML = data.vacantes.length === 0
+      ? `<tr><td colspan="5" class="text-center text-muted py-3">Aún no has publicado ofertas de empleo.</td></tr>`
+      : data.vacantes.map((v) => {
+          const esActiva = v.estado === 'ACTIVA';
+          return `
+            <tr>
+              <td class="fw-bold">${v.titulo}</td>
+              <td>${v.ubicacion} &bull; <span class="badge bg-light text-dark border">${v.modalidad}</span></td>
+              <td class="text-success fw-medium">$${v.salario_min} - $${v.salario_max}</td>
+              <td>
+                <span class="badge ${esActiva ? 'bg-success' : 'bg-secondary'}">
+                  ${esActiva ? 'Activa' : 'Inactiva / Cancelada'}
+                </span>
+              </td>
+              <td class="text-end">
+                <button class="btn btn-outline-warning btn-sm py-0 me-1" onclick="alternarEstadoVacante(${v.id_vacante})">
+                  ${esActiva ? 'Inactivar' : 'Reactivar'}
+                </button>
+                <button class="btn btn-outline-danger btn-sm py-0" onclick="eliminarVacante(${v.id_vacante})">
+                  Eliminar
+                </button>
+              </td>
+            </tr>
+          `;
+        }).join('');
+  }
+
+  // 3. Renderizar tabla "Postulaciones Recibidas" (Aceptar / Denegar)
+  const tbodyPost = document.getElementById('tbody-postulaciones-empresa');
+  if (tbodyPost) {
+    tbodyPost.innerHTML = data.postulaciones.length === 0
+      ? `<tr><td colspan="5" class="text-center text-muted py-3">No hay postulaciones recibidas todavía.</td></tr>`
+      : data.postulaciones.map((p) => {
+          const enlaceCv = p.cv_nombre_archivo
+            ? `<a href="/uploads/cv/${p.cv_nombre_archivo}" target="_blank" class="text-danger text-decoration-none fw-medium"><i class="bi bi-file-earmark-pdf-fill me-1"></i>Ver CV (.pdf)</a>`
+            : `<span class="text-muted">Sin CV</span>`;
+
+          let badgeClase = 'bg-warning text-dark';
+          if (p.estado === 'Aceptado' || p.estado === 'Preseleccionada') badgeClase = 'bg-success';
+          if (p.estado === 'Denegado' || p.estado === 'Rechazada') badgeClase = 'bg-danger';
+
+          return `
+            <tr>
+              <td>
+                <div class="fw-bold">${p.nombre} ${p.apellido_razon}</div>
+                <small class="text-muted">${p.email}</small>
+              </td>
+              <td>${p.titulo_vacante}</td>
+              <td>
+                ${enlaceCv}
+                <button class="btn btn-link btn-sm p-0 ms-2 text-decoration-none" onclick="alert('${(p.carta_presentacion || 'Sin carta de presentación').replace(/'/g, "\\'")}')">Ver nota</button>
+              </td>
+              <td><span class="badge ${badgeClase}">${p.estado}</span></td>
+              <td class="text-end">
+                <button class="btn btn-success btn-sm py-0 me-1" onclick="cambiarEstadoPostulacion(${p.id_postulacion}, 'Aceptado')">
+                  <i class="bi bi-check-lg"></i> Aceptar
+                </button>
+                <button class="btn btn-danger btn-sm py-0" onclick="cambiarEstadoPostulacion(${p.id_postulacion}, 'Denegado')">
+                  <i class="bi bi-x-lg"></i> Denegar
+                </button>
+              </td>
+            </tr>
+          `;
+        }).join('');
+  }
+}
+
+async function alternarEstadoVacante(idVacante) {
+  await fetch(`${API_URL}/vacantes/${idVacante}/estado`, { method: 'PUT' });
+  alert('¡Estado de la oferta actualizado con éxito!');
+  cargarPostulacionesEmpresa();
+  cargarVacantes();
+}
+
+async function eliminarVacante(idVacante) {
+  if (!confirm('¿Estás seguro de eliminar permanentemente esta oferta de empleo?')) return;
+  await fetch(`${API_URL}/vacantes/${idVacante}`, { method: 'DELETE' });
+  alert('¡Oferta eliminada con éxito!');
+  cargarPostulacionesEmpresa();
+  cargarVacantes();
 }
 
 async function cambiarEstadoPostulacion(id, estado) {
@@ -464,159 +540,8 @@ async function cambiarEstadoPostulacion(id, estado) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ estado })
   });
-  alert('¡Estado de postulación actualizado con éxito!');
+  alert(`¡Candidato marcado como ${estado}!`);
   cargarPostulacionesEmpresa();
-}
-
-// ==========================================
-// 4. FOROS DE DISCUSIÓN INTERACTIVOS
-// ==========================================
-let hiloActivoId = null;
-
-function inicializarForos() {
-  // Crear nuevo tópico
-  const formNuevoTema = document.getElementById('form-nuevo-tema');
-  if (formNuevoTema) {
-    formNuevoTema.onsubmit = async (e) => {
-      e.preventDefault();
-      const sesion = JSON.parse(localStorage.getItem('usuarioPortal'));
-      if (!sesion) {
-        alert('Debes iniciar sesión para publicar un tema en el foro.');
-        return;
-      }
-
-      const res = await fetch(`${API_URL}/foros`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          idUsuario: sesion.idUsuario,
-          categoria: document.getElementById('foro-categoria').value,
-          titulo: document.getElementById('foro-titulo').value.trim(),
-          contenido: document.getElementById('foro-contenido').value.trim()
-        })
-      });
-
-      if (res.ok) {
-        bootstrap.Modal.getInstance(document.getElementById('modalNuevoTema')).hide();
-        formNuevoTema.reset();
-        alert('¡Tema publicado con éxito!');
-        cargarForos();
-      }
-    };
-  }
-
-  // Responder dentro de un hilo
-  const formResponder = document.getElementById('form-responder-foro');
-  if (formResponder) {
-    formResponder.onsubmit = async (e) => {
-      e.preventDefault();
-      const sesion = JSON.parse(localStorage.getItem('usuarioPortal'));
-      if (!sesion) {
-        alert('Debes iniciar sesión para responder en el foro.');
-        return;
-      }
-
-      const inputResp = document.getElementById('foro-nueva-respuesta');
-      const mensaje = inputResp.value.trim();
-      if (!mensaje || !hiloActivoId) return;
-
-      const res = await fetch(`${API_URL}/foros/${hiloActivoId}/respuestas`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          idUsuario: sesion.idUsuario,
-          mensaje
-        })
-      });
-
-      if (res.ok) {
-        inputResp.value = '';
-        await cargarRespuestasHilo(hiloActivoId);
-        cargarForos();
-      }
-    };
-  }
-}
-
-async function cargarForos() {
-  const contenedor = document.getElementById('lista-hilos-foro');
-  if (!contenedor) return;
-
-  const filtroCat = document.getElementById('filtro-categoria-foro')?.value || '';
-  const res = await fetch(`${API_URL}/foros`);
-  let hilos = await res.json();
-
-  if (filtroCat) {
-    hilos = hilos.filter((h) => h.categoria === filtroCat);
-  }
-
-  if (hilos.length === 0) {
-    contenedor.innerHTML = `
-      <div class="card card-custom p-4 text-center text-muted">
-        <p class="mb-0">Aún no hay temas publicados en esta categoría. ¡Sé el primero en abrir uno!</p>
-      </div>
-    `;
-    return;
-  }
-
-  contenedor.innerHTML = hilos.map((h) => `
-    <div class="card card-custom p-3 mb-3">
-      <div class="d-flex justify-content-between align-items-center border-bottom-glass pb-2 mb-2">
-        <span class="badge badge-glass-pill">${h.categoria}</span>
-        <small class="text-muted">
-          <i class="bi bi-chat-dots me-1"></i>${h.totalRespuestas} respuestas &bull; Por <strong>${h.usuario.nombre}</strong>
-        </small>
-      </div>
-      <h5 class="mb-1">
-        <a href="#" class="text-decoration-none text-dark" onclick="abrirHiloForo(${h.idHilo})">${h.titulo}</a>
-      </h5>
-      <p class="small text-secondary mb-3">${h.contenido}</p>
-      <div class="text-end">
-        <button class="btn btn-outline-custom btn-sm" onclick="abrirHiloForo(${h.idHilo})">
-          <i class="bi bi-reply me-1"></i>Ver Discusión y Responder
-        </button>
-      </div>
-    </div>
-  `).join('');
-}
-
-async function abrirHiloForo(idHilo) {
-  hiloActivoId = idHilo;
-  const res = await fetch(`${API_URL}/foros`);
-  const hilos = await res.json();
-  const hilo = hilos.find((h) => h.idHilo === idHilo);
-  if (!hilo) return;
-
-  document.getElementById('detalle-foro-categoria').textContent = hilo.categoria;
-  document.getElementById('detalle-foro-titulo').textContent = hilo.titulo;
-  document.getElementById('detalle-foro-autor').textContent = `Publicado por ${hilo.usuario.nombre} (${hilo.usuario.rol})`;
-  document.getElementById('detalle-foro-contenido').textContent = hilo.contenido;
-
-  await cargarRespuestasHilo(idHilo);
-  new bootstrap.Modal(document.getElementById('modalDetalleForo')).show();
-}
-
-async function cargarRespuestasHilo(idHilo) {
-  const lista = document.getElementById('lista-respuestas-foro');
-  if (!lista) return;
-
-  const res = await fetch(`${API_URL}/foros/${idHilo}/respuestas`);
-  const respuestas = await res.json();
-
-  if (respuestas.length === 0) {
-    lista.innerHTML = `<p class="small text-muted fst-italic mb-0">Sin respuestas todavía. ¡Deja el primer comentario!</p>`;
-    return;
-  }
-
-  lista.innerHTML = respuestas.map((r) => `
-    <div class="card glass-subtle p-2 px-3">
-      <div class="d-flex justify-content-between align-items-center mb-1">
-        <span class="small fw-bold text-primary">${r.autor} <span class="badge bg-light text-dark border ms-1">${r.rol}</span></span>
-        <small class="text-muted" style="font-size: 0.75rem;">${new Date(r.fechaRespuesta).toLocaleString()}</small>
-      </div>
-      <p class="small text-dark mb-0">${r.mensaje}</p>
-    </div>
-  `).join('');
 }
 
 // ==========================================

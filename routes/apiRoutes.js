@@ -63,4 +63,9 @@ router.post('/foros/:id/respuestas', ctrl.crearRespuestaForo);
 router.get('/admin/usuarios', ctrl.listarUsuariosAdmin);
 router.put('/admin/usuarios/:id/estado', ctrl.alternarEstadoUsuario);
 
+// Módulo Empresarial: Dashboard y Control de Ofertas
+router.get('/empresa/dashboard/:idUsuario', ctrl.obtenerDashboardEmpresa);
+router.put('/vacantes/:id/estado', ctrl.alternarEstadoVacante);
+router.delete('/vacantes/:id', ctrl.eliminarVacanteEmpresa);
+
 module.exports = router;

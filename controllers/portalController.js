@@ -181,6 +181,7 @@ exports.listarVacantes = async (req, res) => {
 exports.crearVacante = async (req, res) => {
   try {
     const {
+      idUsuarioEmpresa,
       titulo,
       ubicacion,
       modalidad,
@@ -195,10 +196,18 @@ exports.crearVacante = async (req, res) => {
       beneficios
     } = req.body;
 
+    // Buscar la empresa vinculada al usuario logueado (o usar la 1 por defecto)
+    let idEmpresa = 1;
+    if (idUsuarioEmpresa) {
+      const [empRows] = await db.query('SELECT id_empresa FROM empresas WHERE id_usuario_dueno = ?', [idUsuarioEmpresa]);
+      if (empRows.length > 0) idEmpresa = empRows[0].id_empresa;
+    }
+
     const [result] = await db.query(
       `INSERT INTO vacantes (id_empresa, titulo, ubicacion, modalidad, tipo_contrato, nivel_experiencia, sector, salario_min, salario_max, descripcion, responsabilidades, requisitos, beneficios)
-       VALUES (1, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
+        idEmpresa,
         titulo,
         ubicacion,
         modalidad,
@@ -214,6 +223,77 @@ exports.crearVacante = async (req, res) => {
       ]
     );
     res.status(201).json({ idVacante: result.insertId, titulo });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// --- AGREGA ESTAS FUNCIONES AL FINAL DE controllers/portalController.js ---
+
+// Dashboard y Gestión de Ofertas por Empresa
+exports.obtenerDashboardEmpresa = async (req, res) => {
+  try {
+    const { idUsuario } = req.params;
+    const [empRows] = await db.query('SELECT * FROM empresas WHERE id_usuario_dueno = ?', [idUsuario]);
+    const idEmpresa = empRows.length > 0 ? empRows[0].id_empresa : 1;
+
+    const [vacantes] = await db.query(
+      'SELECT * FROM vacantes WHERE id_empresa = ? ORDER BY fecha_publicacion DESC',
+      [idEmpresa]
+    );
+
+    const [postulaciones] = await db.query(`
+      SELECT p.*, v.titulo AS titulo_vacante, u.id_usuario, u.nombre, u.apellido_razon, u.email, u.telefono, u.cv_nombre_archivo
+      FROM postulaciones p
+      JOIN vacantes v ON p.id_vacante = v.id_vacante
+      JOIN usuarios u ON p.id_candidato = u.id_usuario
+      WHERE v.id_empresa = ?
+      ORDER BY p.fecha_postulacion DESC
+    `, [idEmpresa]);
+
+    const activas = vacantes.filter((v) => v.estado === 'ACTIVA').length;
+    const inactivas = vacantes.filter((v) => v.estado === 'CERRADA').length;
+    const aceptados = postulaciones.filter((p) => p.estado === 'Aceptado' || p.estado === 'Preseleccionada').length;
+    const pendientes = postulaciones.filter((p) => p.estado === 'En Revisión').length;
+
+    res.json({
+      empresa: empRows[0] || { id_empresa: 1, nombre_empresa: 'TechNova S.A.' },
+      metricas: {
+        totalVacantes: vacantes.length,
+        vacantesActivas: activas,
+        vacantesInactivas: inactivas,
+        totalPostulaciones: postulaciones.length,
+        candidatosAceptados: aceptados,
+        candidatosPendientes: pendientes
+      },
+      vacantes,
+      postulaciones
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// Inactivar / Reactivar Vacante
+exports.alternarEstadoVacante = async (req, res) => {
+  try {
+    const { id } = req.params;
+    await db.query(
+      "UPDATE vacantes SET estado = IF(estado = 'ACTIVA', 'CERRADA', 'ACTIVA') WHERE id_vacante = ?",
+      [id]
+    );
+    res.json({ ok: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// Eliminar Vacante Permanentemente
+exports.eliminarVacanteEmpresa = async (req, res) => {
+  try {
+    const { id } = req.params;
+    await db.query('DELETE FROM vacantes WHERE id_vacante = ?', [id]);
+    res.json({ ok: true });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

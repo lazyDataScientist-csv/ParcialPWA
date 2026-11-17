@@ -331,30 +331,133 @@
   <!-- ========================================== -->
   <!-- VISTA 4: MÓDULO EMPRESARIAL / PUBLICAR     -->
   <!-- ========================================== -->
+  <!-- ========================================== -->
+  <!-- VISTA 4: MÓDULO EMPRESARIAL Y DASHBOARD    -->
+  <!-- ========================================== -->
   <section id="vista-empresarial" class="seccion-vista d-none py-4">
-    <div class="container" style="max-width: 950px;">
-      <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="container" style="max-width: 1050px;">
+      <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
         <div>
-          <h3 class="mb-1">Módulo Empresarial</h3>
-          <p class="text-secondary small mb-0">Publicación de vacantes y seguimiento de candidatos postulados.</p>
+          <h3 class="mb-1" id="titulo-dashboard-empresa">Dashboard Empresarial</h3>
+          <p class="text-secondary small mb-0">Métricas de reclutamiento, control de vacantes y gestión de candidatos.</p>
         </div>
-        <button class="btn btn-outline-custom btn-sm" onclick="alert('Sección de mantenimiento de perfil corporativo.')">
-          <i class="bi bi-gear me-1"></i>Ajustes de Empresa
-        </button>
+        <span class="badge badge-glass-pill px-3 py-2">
+          <i class="bi bi-building-check me-1"></i>Panel Corporativo Activo
+        </span>
       </div>
 
+      <!-- Tarjetas KPI del Dashboard de Empresa -->
+      <div class="row g-3 mb-4">
+        <div class="col-6 col-md-3">
+          <div class="card card-custom p-3 metric-card">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <h3 class="mb-0" id="kpi-vacantes-activas">0</h3>
+                <small class="text-secondary">Vacantes Activas</small>
+              </div>
+              <i class="bi bi-briefcase fs-2 text-primary opacity-75"></i>
+            </div>
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="card card-custom p-3 metric-card" style="border-left-color: #64748B;">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <h3 class="mb-0 text-secondary" id="kpi-vacantes-inactivas">0</h3>
+                <small class="text-secondary">Inactivas / Cerradas</small>
+              </div>
+              <i class="bi bi-pause-circle fs-2 text-secondary opacity-75"></i>
+            </div>
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="card card-custom p-3 metric-card" style="border-left-color: #0EA5E9;">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <h3 class="mb-0 text-info" id="kpi-postulaciones-total">0</h3>
+                <small class="text-secondary">Postulaciones Recibidas</small>
+              </div>
+              <i class="bi bi-people fs-2 text-info opacity-75"></i>
+            </div>
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="card card-custom p-3 metric-card" style="border-left-color: #16A34A;">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <h3 class="mb-0 text-success" id="kpi-candidatos-aceptados">0</h3>
+                <small class="text-secondary">Candidatos Aceptados</small>
+              </div>
+              <i class="bi bi-check-circle fs-2 text-success opacity-75"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pestañas de Gestión Empresarial -->
       <ul class="nav nav-pills mb-4" id="pills-empresa">
         <li class="nav-item">
-          <button class="nav-link active fw-medium" data-bs-toggle="pill" data-bs-target="#tab-publicar">Publicar Nueva Oferta</button>
+          <button class="nav-link active fw-medium" data-bs-toggle="pill" data-bs-target="#tab-mis-ofertas">
+            <i class="bi bi-list-task me-1"></i>Mis Ofertas (<span id="badge-count-ofertas">0</span>)
+          </button>
         </li>
         <li class="nav-item">
-          <button class="nav-link fw-medium" data-bs-toggle="pill" data-bs-target="#tab-postulaciones">Postulaciones Recibidas</button>
+          <button class="nav-link fw-medium" data-bs-toggle="pill" data-bs-target="#tab-postulaciones">
+            <i class="bi bi-person-check me-1"></i>Postulaciones Recibidas (<span id="badge-count-postulaciones">0</span>)
+          </button>
+        </li>
+        <li class="nav-item">
+          <button class="nav-link fw-medium" data-bs-toggle="pill" data-bs-target="#tab-publicar">
+            <i class="bi bi-plus-circle me-1"></i>Publicar Nueva Oferta
+          </button>
         </li>
       </ul>
 
       <div class="tab-content">
-        <!-- Formulario de Publicación de Oferta con Plantilla Completa -->
-        <div class="tab-pane fade show active" id="tab-publicar">
+        <!-- TAB 1: Control de Ofertas Publicadas (Inactivar / Reactivar / Eliminar) -->
+        <div class="tab-pane fade show active" id="tab-mis-ofertas">
+          <div class="card card-custom glass-elevated p-3">
+            <h5 class="mb-3 border-bottom-glass pb-2">Control de Ofertas Publicadas</h5>
+            <div class="table-responsive">
+              <table class="table align-middle small mb-0">
+                <thead>
+                  <tr>
+                    <th>Título del Puesto</th>
+                    <th>Ubicación / Modalidad</th>
+                    <th>Salario</th>
+                    <th>Estado</th>
+                    <th class="text-end">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody id="tbody-mis-ofertas"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 2: Postulaciones Recibidas (Aceptar / Denegar) -->
+        <div class="tab-pane fade" id="tab-postulaciones">
+          <div class="card card-custom glass-elevated p-3">
+            <h5 class="mb-3 border-bottom-glass pb-2">Candidatos Postulados</h5>
+            <div class="table-responsive">
+              <table class="table align-middle small mb-0">
+                <thead>
+                  <tr>
+                    <th>Candidato</th>
+                    <th>Vacante</th>
+                    <th>Carta / CV</th>
+                    <th>Estado</th>
+                    <th class="text-end">Decisión</th>
+                  </tr>
+                </thead>
+                <tbody id="tbody-postulaciones-empresa"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 3: Formulario de Publicación de Oferta -->
+        <div class="tab-pane fade" id="tab-publicar">
           <div class="card card-custom glass-elevated p-4">
             <h5 class="mb-3 border-bottom-glass pb-2">Información de la Nueva Vacante</h5>
             <form id="form-publicar-vacante">
@@ -399,17 +502,17 @@
 
               <div class="mb-3">
                 <label class="form-label small fw-bold">Responsabilidades (escribe una por línea) *</label>
-                <textarea id="vac-responsabilidades" class="form-control glass-control" rows="3" placeholder="Desarrollar módulos de alto rendimiento en C++17/20.&#10;Optimizar gestión de memoria y concurrencia.&#10;Documentar código y realizar pruebas unitarias." required></textarea>
+                <textarea id="vac-responsabilidades" class="form-control glass-control" rows="3" placeholder="Desarrollar módulos de alto rendimiento.&#10;Optimizar consultas y arquitectura.&#10;Realizar pruebas unitarias." required></textarea>
               </div>
 
               <div class="mb-3">
                 <label class="form-label small fw-bold">Requisitos y Habilidades (escribe uno por línea) *</label>
-                <textarea id="vac-requisitos" class="form-control glass-control" rows="3" placeholder="Dominio de C++ moderno, STL y punteros inteligentes.&#10;Conocimientos de Linux, Git y CMake.&#10;Experiencia en estructuras de datos y algoritmos." required></textarea>
+                <textarea id="vac-requisitos" class="form-control glass-control" rows="3" placeholder="Dominio del lenguaje y herramientas modernas.&#10;Conocimientos de Git y bases de datos SQL." required></textarea>
               </div>
 
               <div class="mb-3">
                 <label class="form-label small fw-bold">Beneficios (escribe uno por línea) *</label>
-                <textarea id="vac-beneficios" class="form-control glass-control" rows="3" placeholder="Horario flexible y modalidad híbrida/remota.&#10;Seguro médico privado y prestaciones de ley.&#10;Bono anual por desempeño y capacitaciones." required></textarea>
+                <textarea id="vac-beneficios" class="form-control glass-control" rows="3" placeholder="Horario flexible y modalidad remota.&#10;Seguro médico privado y prestaciones de ley." required></textarea>
               </div>
 
               <div class="d-flex justify-content-end gap-2">
@@ -417,30 +520,6 @@
                 <button type="submit" class="btn btn-primary-custom btn-sm px-4">Publicar Vacante</button>
               </div>
             </form>
-          </div>
-        </div>
-
-        <!-- Consulta de Postulaciones y Perfiles -->
-        <div class="tab-pane fade" id="tab-postulaciones">
-          <div class="card card-custom glass-elevated p-3">
-            <h5 class="mb-3 border-bottom-glass pb-2">Candidatos Postulados</h5>
-            <div class="table-responsive">
-              <table class="table align-middle small mb-0">
-                <thead>
-                  <tr>
-                    <th>Candidato</th>
-                    <th>Vacante</th>
-                    <th>Fecha Envío</th>
-                    <th>Currículum</th>
-                    <th>Estado</th>
-                    <th>Acción</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <!-- Se llena dinámicamente desde app.js -->
-                </tbody>
-              </table>
-            </div>
           </div>
         </div>
       </div>
