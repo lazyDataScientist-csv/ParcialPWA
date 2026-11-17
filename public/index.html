@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PortalEmpleo - Portal de Búsqueda de Trabajo</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- Encabezado y Barra de Navegación Glass -->
+  <nav class="navbar navbar-expand-lg navbar-custom sticky-top">
+    <div class="container">
+      <a class="navbar-brand navbar-brand-custom" href="#" onclick="mostrarSeccion('vista-inicio')">
+        <i class="bi bi-briefcase-fill me-2"></i>PortalEmpleo
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navPrincipal">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navPrincipal">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-3">
+          <li class="nav-item">
+            <a class="nav-link fw-medium" href="#" onclick="mostrarSeccion('vista-inicio')">Inicio</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link fw-medium" href="#" onclick="mostrarSeccion('vista-busqueda')">Buscar Empleos</a>
+          </li>
+          <li class="nav-item d-none" id="nav-item-empresa">
+            <a class="nav-link fw-medium" href="#" onclick="mostrarSeccion('vista-empresarial')">Publicar Empleos</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link fw-medium" href="#" onclick="mostrarSeccion('vista-recursos')">Recursos</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link fw-medium" href="#" onclick="mostrarSeccion('vista-foros')">Foros</a>
+          </li>
+          <li class="nav-item d-none" id="nav-item-perfil">
+            <a class="nav-link fw-medium" href="#" onclick="mostrarSeccion('vista-perfil')">Mi Perfil</a>
+          </li>
+          <li class="nav-item d-none" id="nav-item-admin">
+            <a class="nav-link fw-medium" href="#" onclick="mostrarSeccion('vista-admin')">Admin</a>
+          </li>
+        </ul>
+
+        <div class="d-flex align-items-center gap-2">
+          <button class="btn btn-outline-custom btn-sm" data-bs-toggle="modal" data-bs-target="#modalLogin">Iniciar Sesión</button>
+          <button class="btn btn-primary-custom btn-sm" data-bs-toggle="modal" data-bs-target="#modalRegistro">Registrarse</button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ========================================== -->
+  <!-- VISTA 1: PÁGINA DE INICIO (HOME)           -->
+  <!-- ========================================== -->
+  <section id="vista-inicio" class="seccion-vista">
+    <div class="hero-section text-center">
+      <div class="container">
+        <span class="badge badge-glass-pill mb-3 px-3 py-2">
+          <i class="bi bi-stars me-1"></i>Plataforma Profesional de Talento
+        </span>
+        <h1 class="display-5 fw-bold mb-3">Encuentra el trabajo ideal para tu carrera</h1>
+        <p class="lead text-secondary mb-4 mx-auto" style="max-width: 650px;">
+          Conectamos talento profesional con las empresas líderes en tecnología, finanzas, servicios e ingeniería.
+        </p>
+
+        <!-- Barra de Búsqueda Rápida con Filtros Principales -->
+        <div class="card card-custom glass-elevated p-3 p-md-4 mx-auto mb-4" style="max-width: 950px;">
+          <form class="row g-2 align-items-center" onsubmit="event.preventDefault(); mostrarSeccion('vista-busqueda');">
+            <div class="col-md-3">
+              <div class="input-group glass-input-group">
+                <span class="input-group-text border-end-0"><i class="bi bi-search text-muted"></i></span>
+                <input type="text" class="form-control border-start-0" placeholder="Puesto o palabra clave" />
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="input-group glass-input-group">
+                <span class="input-group-text border-end-0"><i class="bi bi-geo-alt text-muted"></i></span>
+                <input type="text" class="form-control border-start-0" placeholder="Ubicación (Ej. San Salvador)" />
+              </div>
+            </div>
+            <div class="col-md-2">
+              <select class="form-select glass-control">
+                <option selected disabled>Modalidad</option>
+                <option>Remoto</option>
+                <option>Híbrido</option>
+                <option>Presencial</option>
+              </select>
+            </div>
+            <div class="col-md-2">
+              <select class="form-select glass-control">
+                <option selected disabled>Experiencia</option>
+                <option>Junior (0 - 2 años)</option>
+                <option>Intermedio (3 - 5 años)</option>
+                <option>Senior (5+ años)</option>
+              </select>
+            </div>
+            <div class="col-md-2">
+              <button type="submit" class="btn btn-primary-custom w-100">Buscar</button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Métricas del Portal -->
+        <div class="row g-3 justify-content-center text-start mt-2" style="max-width: 950px; margin: 0 auto;">
+          <div class="col-6 col-md-3">
+            <div class="card card-custom p-3 metric-card">
+              <h3 class="mb-0">12,450+</h3>
+              <small class="text-secondary">Vacantes Publicadas</small>
+            </div>
+          </div>
+          <div class="col-6 col-md-3">
+            <div class="card card-custom p-3 metric-card">
+              <h3 class="mb-0">1,820+</h3>
+              <small class="text-secondary">Empresas Aliadas</small>
+            </div>
+          </div>
+          <div class="col-6 col-md-3">
+            <div class="card card-custom p-3 metric-card">
+              <h3 class="mb-0">45,000+</h3>
+              <small class="text-secondary">Candidatos Activos</small>
+            </div>
+          </div>
+          <div class="col-6 col-md-3">
+            <div class="card card-custom p-3 metric-card">
+              <h3 class="mb-0">98%</h3>
+              <small class="text-secondary">Procesos Efectivos</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ofertas Destacadas en Inicio -->
+    <div class="container py-5">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="mb-0">Ofertas de Trabajo Destacadas</h4>
+        <button class="btn btn-link text-decoration-none fw-medium" onclick="mostrarSeccion('vista-busqueda')">Ver todas las ofertas &rarr;</button>
+      </div>
+
+      <div class="row g-3">
+        <div class="col-md-6">
+          <div class="card card-custom p-3 h-100">
+            <div class="d-flex justify-content-between align-items-start">
+              <div>
+                <span class="badge badge-remote px-2 py-1 mb-2">Remoto</span>
+                <h5 class="mb-1"><a href="#" class="text-decoration-none text-dark" onclick="verDetalleVacante(2)">Desarrollador Frontend Senior</a></h5>
+                <p class="text-secondary small mb-2"><i class="bi bi-building me-1"></i>TechNova S.A. &bull; <i class="bi bi-geo-alt me-1"></i>San Salvador, SV</p>
+              </div>
+              <span class="fw-bold text-success">$1,800 - $2,400</span>
+            </div>
+            <p class="small text-muted mb-3">Buscamos ingeniero con experiencia sólida en React, TypeScript y Tailwind para plataforma SaaS financiera.</p>
+            <div class="d-flex justify-content-between align-items-center mt-auto">
+              <small class="text-muted"><i class="bi bi-clock me-1"></i>Reciente</small>
+              <button class="btn btn-outline-custom btn-sm" onclick="verDetalleVacante(2)">Ver Oferta</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <div class="card card-custom p-3 h-100">
+            <div class="d-flex justify-content-between align-items-start">
+              <div>
+                <span class="badge badge-fulltime px-2 py-1 mb-2">Híbrido</span>
+                <h5 class="mb-1"><a href="#" class="text-decoration-none text-dark" onclick="verDetalleVacante(1)">Desarrollador Full Stack (Java + React)</a></h5>
+                <p class="text-secondary small mb-2"><i class="bi bi-building me-1"></i>TechNova S.A. &bull; <i class="bi bi-geo-alt me-1"></i>San Salvador, SV</p>
+              </div>
+              <span class="fw-bold text-success">$1,600 - $2,200</span>
+            </div>
+            <p class="small text-muted mb-3">Creación y mantenimiento de microservicios REST, esquemas SQL y componentes de interfaz reactivos.</p>
+            <div class="d-flex justify-content-between align-items-center mt-auto">
+              <small class="text-muted"><i class="bi bi-clock me-1"></i>Reciente</small>
+              <button class="btn btn-outline-custom btn-sm" onclick="verDetalleVacante(1)">Ver Oferta</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================== -->
+  <!-- VISTA 2: RESULTADOS Y FILTROS AVANZADOS    -->
+  <!-- ========================================== -->
+  <section id="vista-busqueda" class="seccion-vista d-none py-4">
+    <div class="container">
+      <div class="row g-4">
+        <!-- Barra Lateral de Filtros Avanzados -->
+        <aside class="col-lg-3">
+          <div class="card card-custom p-3">
+            <h5 class="mb-3 border-bottom-glass pb-2">Filtros de Búsqueda</h5>
+
+            <div class="mb-3">
+              <label class="form-label small fw-bold">Tipo de Contrato</label>
+              <div class="form-check small">
+                <input class="form-check-input" type="checkbox" id="cont1">
+                <label class="form-check-label" for="cont1">Tiempo Completo</label>
+              </div>
+              <div class="form-check small">
+                <input class="form-check-input" type="checkbox" id="cont2">
+                <label class="form-check-label" for="cont2">Medio Tiempo</label>
+              </div>
+              <div class="form-check small">
+                <input class="form-check-input" type="checkbox" id="cont3">
+                <label class="form-check-label" for="cont3">Por Proyecto / Freelance</label>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label small fw-bold">Sector Laboral</label>
+              <select class="form-select form-select-sm glass-control">
+                <option selected>Todos los sectores</option>
+                <option>Tecnología y Software</option>
+                <option>Contabilidad y Finanzas</option>
+                <option>Diseño y Marketing</option>
+                <option>Legal y Comercial</option>
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label small fw-bold">Nivel de Experiencia</label>
+              <div class="form-check small">
+                <input class="form-check-input" type="radio" name="exp" id="exp1" checked>
+                <label class="form-check-label" for="exp1">Cualquier nivel</label>
+              </div>
+              <div class="form-check small">
+                <input class="form-check-input" type="radio" name="exp" id="exp2">
+                <label class="form-check-label" for="exp2">Junior (0 - 2 años)</label>
+              </div>
+              <div class="form-check small">
+                <input class="form-check-input" type="radio" name="exp" id="exp3">
+                <label class="form-check-label" for="exp3">Intermedio (3 - 5 años)</label>
+              </div>
+              <div class="form-check small">
+                <input class="form-check-input" type="radio" name="exp" id="exp4">
+                <label class="form-check-label" for="exp4">Senior (5+ años)</label>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label small fw-bold">Rango Salarial Mensual</label>
+              <input type="range" class="form-range" min="500" max="4000" step="100" value="500" id="rangoSalario">
+              <div class="d-flex justify-content-between small text-muted">
+                <span>$500</span>
+                <span>$4,000+</span>
+              </div>
+            </div>
+
+            <button type="button" class="btn btn-outline-custom btn-sm w-100">Restablecer Filtros</button>
+          </div>
+        </aside>
+
+        <!-- Listado de Ofertas Coincidentes -->
+        <main class="col-lg-9">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="mb-0">Resultados encontrados</h5>
+            <select class="form-select form-select-sm w-auto glass-control">
+              <option>Ordenar por: Más recientes</option>
+              <option>Mayor salario</option>
+            </select>
+          </div>
+
+          <div class="d-flex flex-column gap-3">
+            <!-- Se llena dinámicamente desde app.js -->
+          </div>
+        </main>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================== -->
+  <!-- VISTA 3: DESCRIPCIÓN DETALLADA DEL EMPLEO  -->
+  <!-- ========================================== -->
+  <section id="vista-detalle-empleo" class="seccion-vista d-none py-4">
+    <div class="container" style="max-width: 900px;">
+      <button class="btn btn-link text-decoration-none px-0 mb-3" onclick="mostrarSeccion('vista-busqueda')">&larr; Volver a resultados</button>
+
+      <div class="card card-custom glass-elevated p-4 mb-4">
+        <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 border-bottom-glass pb-3 mb-3">
+          <div>
+            <span class="badge badge-remote mb-2">Remoto / El Salvador</span>
+            <h3 class="mb-1">Título de la Vacante</h3>
+            <p class="text-secondary mb-0"><i class="bi bi-building me-1"></i>TechNova S.A. &bull; Publicado recientemente</p>
+          </div>
+          <div class="text-end">
+            <h4 class="text-success mb-2">$1,600 - $2,200 / mes</h4>
+            <button class="btn btn-primary-custom px-4" data-bs-toggle="modal" data-bs-target="#modalPostulacion">Aplicar a la Oferta</button>
+          </div>
+        </div>
+
+        <h5 class="mb-2">Descripción del Puesto</h5>
+        <p id="detalle-descripcion" class="text-secondary small"></p>
+
+        <h5 class="mb-2">Responsabilidades</h5>
+        <ul id="lista-responsabilidades" class="text-secondary small"></ul>
+
+        <h5 class="mb-2">Requisitos y Habilidades</h5>
+        <ul id="lista-requisitos" class="text-secondary small"></ul>
+
+        <h5 class="mb-2">Beneficios</h5>
+        <ul id="lista-beneficios" class="text-secondary small mb-4"></ul>
+
+        <!-- Valoraciones de la Empresa Empleadora -->
+        <div class="border-top-glass pt-4">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="mb-0">Valoraciones de TechNova S.A.</h5>
+            <div class="star-rating">
+              <i class="bi bi-star-fill"></i>
+              <i class="bi bi-star-fill"></i>
+              <i class="bi bi-star-fill"></i>
+              <i class="bi bi-star-fill"></i>
+              <i class="bi bi-star-half"></i>
+              <span class="text-dark fw-bold ms-1">4.6 / 5.0</span>
+            </div>
+          </div>
+
+          <div class="card glass-subtle border-0 p-3 mb-2">
+            <div class="d-flex justify-content-between mb-1">
+              <span class="fw-bold small">Desarrollador Backend (Actual colaborador)</span>
+              <small class="text-muted">Septiembre 2026</small>
+            </div>
+            <p class="small text-secondary mb-0">"Excelente balance vida-trabajo y gran cultura técnica. Los líderes respetan los tiempos de entrega sin microgestión."</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================== -->
+  <!-- VISTA 4: MÓDULO EMPRESARIAL / PUBLICAR     -->
+  <!-- ========================================== -->
+  <section id="vista-empresarial" class="seccion-vista d-none py-4">
+    <div class="container" style="max-width: 950px;">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+          <h3 class="mb-1">Módulo Empresarial</h3>
+          <p class="text-secondary small mb-0">Publicación de vacantes y seguimiento de candidatos postulados.</p>
+        </div>
+        <button class="btn btn-outline-custom btn-sm" onclick="alert('Sección de mantenimiento de perfil corporativo.')">
+          <i class="bi bi-gear me-1"></i>Ajustes de Empresa
+        </button>
+      </div>
+
+      <ul class="nav nav-pills mb-4" id="pills-empresa">
+        <li class="nav-item">
+          <button class="nav-link active fw-medium" data-bs-toggle="pill" data-bs-target="#tab-publicar">Publicar Nueva Oferta</button>
+        </li>
+        <li class="nav-item">
+          <button class="nav-link fw-medium" data-bs-toggle="pill" data-bs-target="#tab-postulaciones">Postulaciones Recibidas</button>
+        </li>
+      </ul>
+
+      <div class="tab-content">
+        <!-- Formulario de Publicación de Oferta con Plantilla Completa -->
+        <div class="tab-pane fade show active" id="tab-publicar">
+          <div class="card card-custom glass-elevated p-4">
+            <h5 class="mb-3 border-bottom-glass pb-2">Información de la Nueva Vacante</h5>
+            <form id="form-publicar-vacante">
+              <div class="row g-3 mb-3">
+                <div class="col-md-6">
+                  <label class="form-label small fw-bold">Título del Puesto *</label>
+                  <input type="text" id="vac-titulo" class="form-control glass-control" placeholder="Ej. Programador en C++ / Ingeniero Rust" required>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label small fw-bold">Ubicación *</label>
+                  <input type="text" id="vac-ubicacion" class="form-control glass-control" placeholder="Ej. Santa Tecla, SV o Remoto" required>
+                </div>
+              </div>
+
+              <div class="row g-3 mb-3">
+                <div class="col-md-4">
+                  <label class="form-label small fw-bold">Modalidad</label>
+                  <select id="vac-modalidad" class="form-select glass-control">
+                    <option>Remoto</option>
+                    <option>Presencial</option>
+                    <option>Híbrido</option>
+                  </select>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label small fw-bold">Nivel de Experiencia</label>
+                  <select id="vac-experiencia" class="form-select glass-control">
+                    <option>Junior (0 - 2 años)</option>
+                    <option>Intermedio (3 - 5 años)</option>
+                    <option>Senior (5+ años)</option>
+                  </select>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label small fw-bold">Salario Base Mensual ($)</label>
+                  <input type="number" id="vac-salario" class="form-control glass-control" placeholder="Ej. 2500" required>
+                </div>
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label small fw-bold">Descripción del Puesto *</label>
+                <textarea id="vac-descripcion" class="form-control glass-control" rows="2" placeholder="Resume el objetivo principal del puesto y el equipo de trabajo..." required></textarea>
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label small fw-bold">Responsabilidades (escribe una por línea) *</label>
+                <textarea id="vac-responsabilidades" class="form-control glass-control" rows="3" placeholder="Desarrollar módulos de alto rendimiento en C++17/20.&#10;Optimizar gestión de memoria y concurrencia.&#10;Documentar código y realizar pruebas unitarias." required></textarea>
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label small fw-bold">Requisitos y Habilidades (escribe uno por línea) *</label>
+                <textarea id="vac-requisitos" class="form-control glass-control" rows="3" placeholder="Dominio de C++ moderno, STL y punteros inteligentes.&#10;Conocimientos de Linux, Git y CMake.&#10;Experiencia en estructuras de datos y algoritmos." required></textarea>
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label small fw-bold">Beneficios (escribe uno por línea) *</label>
+                <textarea id="vac-beneficios" class="form-control glass-control" rows="3" placeholder="Horario flexible y modalidad híbrida/remota.&#10;Seguro médico privado y prestaciones de ley.&#10;Bono anual por desempeño y capacitaciones." required></textarea>
+              </div>
+
+              <div class="d-flex justify-content-end gap-2">
+                <button type="reset" class="btn btn-outline-secondary btn-sm">Limpiar</button>
+                <button type="submit" class="btn btn-primary-custom btn-sm px-4">Publicar Vacante</button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- Consulta de Postulaciones y Perfiles -->
+        <div class="tab-pane fade" id="tab-postulaciones">
+          <div class="card card-custom glass-elevated p-3">
+            <h5 class="mb-3 border-bottom-glass pb-2">Candidatos Postulados</h5>
+            <div class="table-responsive">
+              <table class="table align-middle small mb-0">
+                <thead>
+                  <tr>
+                    <th>Candidato</th>
+                    <th>Vacante</th>
+                    <th>Fecha Envío</th>
+                    <th>Currículum</th>
+                    <th>Estado</th>
+                    <th>Acción</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <!-- Se llena dinámicamente desde app.js -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================== -->
+  <!-- VISTA 5: RECURSOS Y CONSEJOS DE CARRERA    -->
+  <!-- ========================================== -->
+  <section id="vista-recursos" class="seccion-vista d-none py-4">
+    <div class="container" style="max-width: 950px;">
+      <h3 class="mb-2">Recursos y Consejos de Carrera</h3>
+      <p class="text-secondary small mb-4">Guías prácticas, preparación para entrevistas y tendencias del mercado laboral.</p>
+
+      <div class="row g-4">
+        <div class="col-md-4">
+          <div class="card card-custom h-100 p-3">
+            <div class="text-primary mb-2 fs-3"><i class="bi bi-file-text"></i></div>
+            <h5 class="mb-2">Cómo estructurar un Currículum Técnico de Impacto</h5>
+            <p class="small text-secondary flex-grow-1">Aprende a mapear proyectos con metodología STAR y destacar tus competencias clave en una sola página.</p>
+            <a href="#" class="btn btn-outline-custom btn-sm mt-auto">Leer Artículo</a>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="card card-custom h-100 p-3">
+            <div class="text-primary mb-2 fs-3"><i class="bi bi-camera-video"></i></div>
+            <h5 class="mb-2">Guía de Preparación para Entrevistas Técnicas</h5>
+            <p class="small text-secondary flex-grow-1">Simulaciones de preguntas sobre patrones de software, arquitectura de sistemas y pruebas en vivo.</p>
+            <a href="#" class="btn btn-outline-custom btn-sm mt-auto">Ver Tutorial</a>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="card card-custom h-100 p-3">
+            <div class="text-primary mb-2 fs-3"><i class="bi bi-graph-up-arrow"></i></div>
+            <h5 class="mb-2">Reporte Salarial Tecnológico 2026</h5>
+            <p class="small text-secondary flex-grow-1">Análisis comparativo de remuneraciones en Centroamérica y oportunidades internacionales remotas.</p>
+            <a href="#" class="btn btn-outline-custom btn-sm mt-auto">Descargar PDF</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================== -->
+  <!-- VISTA 6: FOROS DE DISCUSIÓN PROFESIONAL    -->
+  <!-- ========================================== -->
+  <section id="vista-foros" class="seccion-vista d-none py-4">
+    <div class="container" style="max-width: 950px;">
+      <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+        <div>
+          <h3 class="mb-1">Foros de Discusión Profesional</h3>
+          <p class="text-secondary small mb-0">Interactúa con colegas, comparte experiencias laborales y resuelve dudas de carrera.</p>
+        </div>
+        <button class="btn btn-primary-custom btn-sm px-3" data-bs-toggle="modal" data-bs-target="#modalNuevoTema">
+          <i class="bi bi-plus-circle me-1"></i>Nuevo Tema
+        </button>
+      </div>
+
+      <!-- Filtro rápido por categoría del foro -->
+      <div class="card card-custom p-3 mb-4">
+        <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
+          <span class="small fw-bold text-primary"><i class="bi bi-funnel me-1"></i>Filtrar por categoría:</span>
+          <select id="filtro-categoria-foro" class="form-select form-select-sm glass-control w-auto" onchange="cargarForos()">
+            <option value="">Todas las categorías</option>
+            <option value="Tecnología y Código">Tecnología y Código</option>
+            <option value="Transición de Carrera">Transición de Carrera</option>
+            <option value="Entrevistas y CV">Entrevistas y CV</option>
+            <option value="Trabajo Remoto">Trabajo Remoto</option>
+            <option value="Consultas Salariales">Consultas Salariales</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Listado dinámico de hilos del foro -->
+      <div id="lista-hilos-foro"></div>
+    </div>
+  </section>
+
+  <!-- ========================================== -->
+  <!-- VISTA 7: TABLERO Y PERFIL DE USUARIO       -->
+  <!-- ========================================== -->
+  <section id="vista-perfil" class="seccion-vista d-none py-4">
+    <div class="container" style="max-width: 1050px;">
+      <h3 class="mb-4">Tablero Personal y Perfil de Usuario</h3>
+
+      <div class="row g-4">
+        <!-- Columna Izquierda: Perfil lateral -->
+        <div class="col-lg-3">
+          <div class="card card-custom text-center p-3 mb-3">
+            <div class="glass-avatar rounded-circle mx-auto d-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+              <i class="bi bi-person-fill fs-1 text-primary"></i>
+            </div>
+            <h5 class="mb-1">Usuario Candidato</h5>
+            <p class="text-secondary small mb-3">Software Engineer</p>
+
+            <div class="list-group list-group-flush text-start small rounded">
+              <a href="#" class="list-group-item list-group-item-action active fw-medium"><i class="bi bi-person me-2"></i>Mi Perfil</a>
+              <a href="#" class="list-group-item list-group-item-action"><i class="bi bi-send me-2"></i>Solicitudes (87)</a>
+              <a href="#" class="list-group-item list-group-item-action"><i class="bi bi-bell me-2"></i>Alertas</a>
+              <a href="#" class="list-group-item list-group-item-action"><i class="bi bi-star me-2"></i>Valoraciones</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Columna Derecha: Cuadrantes del prototipo -->
+        <div class="col-lg-9">
+          <div class="row g-3">
+            <!-- Cuadrante 1: Gestión de Perfil y Carga CV (.pdf) -->
+            <div class="col-md-6">
+              <div class="card card-custom p-3 h-100">
+                <h5 class="border-bottom-glass pb-2 mb-3">Gestión de Perfil</h5>
+                <form>
+                  <div class="row g-2 mb-2">
+                    <div class="col-6">
+                      <label class="form-label small mb-1">Nombre</label>
+                      <input type="text" class="form-control form-control-sm glass-control" value="Joseph">
+                    </div>
+                    <div class="col-6">
+                      <label class="form-label small mb-1">Apellidos</label>
+                      <input type="text" class="form-control form-control-sm glass-control" value="Gómez">
+                    </div>
+                  </div>
+                  <div class="row g-2 mb-3">
+                    <div class="col-6">
+                      <label class="form-label small mb-1">Email</label>
+                      <input type="email" class="form-control form-control-sm glass-control" value="usuario@email.com">
+                    </div>
+                    <div class="col-6">
+                      <label class="form-label small mb-1">Teléfono</label>
+                      <input type="text" class="form-control form-control-sm glass-control" value="7000-0000">
+                    </div>
+                  </div>
+
+                  <label class="form-label small mb-1">Currículum Vitae (Solo PDF)</label>
+                  <div id="dropzone-cv" class="dropzone-glass rounded p-3 text-center mb-3" style="cursor: pointer;" onclick="document.getElementById('archivoCv').click()">
+                    <i class="bi bi-file-earmark-pdf fs-3 text-danger d-block"></i>
+                    <span id="texto-cv-actual" class="small text-muted d-block">Haz clic para seleccionar tu CV (.pdf)</span>
+                    <input type="file" class="d-none" id="archivoCv" accept=".pdf,application/pdf">
+                  </div>
+                  <button type="submit" class="btn btn-primary-custom btn-sm w-100">Actualizar Datos</button>
+                </form>
+              </div>
+            </div>
+
+            <!-- Cuadrante 2: Estadísticas de Perfil -->
+            <div class="col-md-6">
+              <div class="card card-custom p-3 h-100">
+                <h5 class="border-bottom-glass pb-2 mb-3">Estadísticas de Perfil</h5>
+                <div class="d-flex align-items-center justify-content-between p-3 glass-subtle rounded mb-3">
+                  <div>
+                    <h2 class="mb-0 fw-bold">1,245</h2>
+                    <small class="text-secondary">Visitas al perfil</small>
+                  </div>
+                  <i class="bi bi-graph-up text-primary fs-1"></i>
+                </div>
+
+                <div class="d-flex align-items-center justify-content-between p-3 glass-subtle rounded">
+                  <div>
+                    <h2 class="mb-0 fw-bold">87</h2>
+                    <small class="text-secondary">Total de solicitudes enviadas</small>
+                  </div>
+                  <i class="bi bi-send-check text-success fs-1"></i>
+                </div>
+              </div>
+            </div>
+
+            <!-- Cuadrante 3: Panel de Alertas de Empleo -->
+            <div class="col-md-6">
+              <div class="card card-custom p-3 h-100">
+                <h5 class="border-bottom-glass pb-2 mb-3">Panel de Alertas</h5>
+                <ul class="list-group list-group-flush small">
+                  <li class="list-group-item bg-transparent d-flex justify-content-between align-items-center px-0">
+                    <span><i class="bi bi-bell me-2 text-primary"></i>Desarrollador Web (Remoto)</span>
+                    <div class="form-check form-switch mb-0">
+                      <input class="form-check-input" type="checkbox" checked>
+                    </div>
+                  </li>
+                  <li class="list-group-item bg-transparent d-flex justify-content-between align-items-center px-0">
+                    <span><i class="bi bi-bell me-2 text-primary"></i>Diseñador UI/UX (San Salvador)</span>
+                    <div class="form-check form-switch mb-0">
+                      <input class="form-check-input" type="checkbox" checked>
+                    </div>
+                  </li>
+                  <li class="list-group-item bg-transparent d-flex justify-content-between align-items-center px-0">
+                    <span><i class="bi bi-bell me-2 text-primary"></i>Administrador MySQL</span>
+                    <div class="form-check form-switch mb-0">
+                      <input class="form-check-input" type="checkbox">
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <!-- Cuadrante 4: Sección de Valoraciones a Empresas -->
+            <div class="col-md-6">
+              <div class="card card-custom p-3 h-100">
+                <h5 class="border-bottom-glass pb-2 mb-3">Sección de Valoraciones</h5>
+                <p class="small text-secondary mb-2">Califica y comparte tu experiencia sobre empresas donde has laborado:</p>
+                <div class="star-rating mb-2">
+                  <i class="bi bi-star"></i>
+                  <i class="bi bi-star"></i>
+                  <i class="bi bi-star"></i>
+                  <i class="bi bi-star"></i>
+                  <i class="bi bi-star"></i>
+                </div>
+                <textarea class="form-control form-control-sm glass-control mb-3" rows="3" placeholder="Escribe tu experiencia laboral..."></textarea>
+                <div class="text-end">
+                  <button type="button" class="btn btn-outline-custom btn-sm px-3">Enviar</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================== -->
+  <!-- VISTA 8: PANEL ADMINISTRATIVO             -->
+  <!-- ========================================== -->
+  <section id="vista-admin" class="seccion-vista d-none py-4">
+    <div class="container" style="max-width: 1050px;">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+          <h3 class="mb-1">Panel de Control Administrativo</h3>
+          <p class="text-secondary small mb-0">Módulo exclusivo para supervisión y moderación del portal.</p>
+        </div>
+        <span class="badge bg-danger px-3 py-2">Rol: Administrador General</span>
+      </div>
+
+      <!-- Resumen estadístico del sistema -->
+      <div class="row g-3 mb-4">
+        <div class="col-md-3">
+          <div class="card card-custom p-3 text-center">
+            <h4 class="mb-0">3,420</h4>
+            <small class="text-secondary">Usuarios Registrados</small>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card card-custom p-3 text-center">
+            <h4 class="mb-0">480</h4>
+            <small class="text-secondary">Empresas Verificadas</small>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card card-custom p-3 text-center">
+            <h4 class="mb-0">1,120</h4>
+            <small class="text-secondary">Vacantes Activas</small>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card card-custom p-3 text-center">
+            <h4 class="mb-0 text-danger">6</h4>
+            <small class="text-secondary">Reportes de Moderación</small>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pestañas de Gestión Administrativa -->
+      <div class="card card-custom glass-elevated p-3">
+        <ul class="nav nav-tabs mb-3" id="adminTabs">
+          <li class="nav-item">
+            <button class="nav-link active text-dark fw-medium" data-bs-toggle="tab" data-bs-target="#admin-usuarios">Gestión de Usuarios</button>
+          </li>
+          <li class="nav-item">
+            <button class="nav-link text-dark fw-medium" data-bs-toggle="tab" data-bs-target="#admin-empresas">Gestión de Empresas</button>
+          </li>
+          <li class="nav-item">
+            <button class="nav-link text-dark fw-medium" data-bs-toggle="tab" data-bs-target="#admin-vacantes">Gestión de Vacantes</button>
+          </li>
+          <li class="nav-item">
+            <button class="nav-link text-dark fw-medium" data-bs-toggle="tab" data-bs-target="#admin-moderacion">Moderación de Contenido</button>
+          </li>
+        </ul>
+
+        <div class="tab-content">
+          <div class="tab-pane fade show active" id="admin-usuarios">
+            <div class="table-responsive">
+              <table class="table table-hover small mb-0 align-middle">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Nombre Completo</th>
+                    <th>Correo</th>
+                    <th>Tipo</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <!-- Se llena dinámicamente desde app.js -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="tab-pane fade" id="admin-empresas">
+            <p class="small text-muted py-3">Listado y aprobación de registros fiscales de empresas contratantes.</p>
+          </div>
+
+          <div class="tab-pane fade" id="admin-vacantes">
+            <p class="small text-muted py-3">Control de publicaciones vigentes y depuración de ofertas expiradas.</p>
+          </div>
+
+          <div class="tab-pane fade" id="admin-moderacion">
+            <p class="small text-muted py-3">Revisión de denuncias sobre ofertas engañosas o comentarios en valoraciones.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================== -->
+  <!-- MODALES DE AUTENTICACIÓN Y POSTULACIÓN     -->
+  <!-- ========================================== -->
+
+  <!-- Modal Login -->
+  <div class="modal fade" id="modalLogin" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+      <div class="modal-content glass-modal">
+        <div class="modal-header border-0 pb-0">
+          <h5 class="modal-title fw-bold">Iniciar Sesión</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <form>
+            <div class="mb-3">
+              <label class="form-label small">Correo Electrónico</label>
+              <input type="email" class="form-control glass-control" placeholder="nombre@correo.com" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label small">Contraseña</label>
+              <input type="password" class="form-control glass-control" placeholder="••••••••" required>
+            </div>
+            <button type="submit" class="btn btn-primary-custom w-100">Ingresar</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Registro -->
+  <div class="modal fade" id="modalRegistro" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content glass-modal">
+        <div class="modal-header border-0 pb-0">
+          <h5 class="modal-title fw-bold">Crear Cuenta</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <form>
+            <div class="mb-3">
+              <label class="form-label small">Tipo de Cuenta</label>
+              <select class="form-select glass-control">
+                <option>Candidato (Busco empleo)</option>
+                <option>Empresa (Deseo publicar empleos)</option>
+              </select>
+            </div>
+            <div class="row g-2 mb-3">
+              <div class="col-6">
+                <label class="form-label small">Nombre</label>
+                <input type="text" class="form-control glass-control" required>
+              </div>
+              <div class="col-6">
+                <label class="form-label small">Apellido / Razón Social</label>
+                <input type="text" class="form-control glass-control" required>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label small">Correo Electrónico</label>
+              <input type="email" class="form-control glass-control" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label small">Contraseña</label>
+              <input type="password" class="form-control glass-control" required>
+            </div>
+            <button type="submit" class="btn btn-primary-custom w-100">Registrarme</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Postulación Rápida -->
+  <div class="modal fade" id="modalPostulacion" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content glass-modal">
+        <div class="modal-header border-bottom-glass">
+          <h5 class="modal-title fw-bold">Postular a la Vacante</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <p class="small text-secondary mb-3">Se enviará tu perfil y currículum registrado al equipo de selección de la empresa.</p>
+          <div class="mb-3">
+            <label class="form-label small fw-bold">Mensaje / Carta de Presentación breve</label>
+            <textarea class="form-control glass-control" rows="3" placeholder="Explica brevemente por qué eres el candidato ideal para este puesto..."></textarea>
+          </div>
+          <div class="form-check small mb-3">
+            <input class="form-check-input" type="checkbox" id="checkCv" checked>
+            <label class="form-check-label" for="checkCv">Adjuntar mi CV principal en PDF</label>
+          </div>
+          <button type="button" class="btn btn-primary-custom w-100" data-bs-dismiss="modal">Confirmar Postulación</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Nuevo Tema en Foro -->
+  <div class="modal fade" id="modalNuevoTema" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content glass-modal">
+        <div class="modal-header border-bottom-glass">
+          <h5 class="modal-title fw-bold"><i class="bi bi-chat-square-text me-2"></i>Publicar Nuevo Tema</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <form id="form-nuevo-tema">
+            <div class="mb-3">
+              <label class="form-label small fw-bold">Categoría *</label>
+              <select id="foro-categoria" class="form-select glass-control" required>
+                <option value="Tecnología y Código">Tecnología y Código</option>
+                <option value="Transición de Carrera">Transición de Carrera</option>
+                <option value="Entrevistas y CV">Entrevistas y CV</option>
+                <option value="Trabajo Remoto">Trabajo Remoto</option>
+                <option value="Consultas Salariales">Consultas Salariales</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label class="form-label small fw-bold">Título del Tópico *</label>
+              <input type="text" id="foro-titulo" class="form-control glass-control" placeholder="Ej. ¿Qué stack recomiendan para iniciar en backend?" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label small fw-bold">Descripción / Contenido *</label>
+              <textarea id="foro-contenido" class="form-control glass-control" rows="4" placeholder="Escribe tu consulta, experiencia o tema de debate..." required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary-custom w-100">Publicar en el Foro</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Detalle y Respuestas de un Hilo -->
+  <div class="modal fade" id="modalDetalleForo" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
+      <div class="modal-content glass-modal">
+        <div class="modal-header border-bottom-glass">
+          <div>
+            <span id="detalle-foro-categoria" class="badge badge-glass-pill mb-1">Categoría</span>
+            <h5 id="detalle-foro-titulo" class="modal-title fw-bold mb-0">Título del Hilo</h5>
+          </div>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="card glass-subtle p-3 mb-3">
+            <small id="detalle-foro-autor" class="text-primary fw-bold d-block mb-1">Publicado por</small>
+            <p id="detalle-foro-contenido" class="small text-dark mb-0"></p>
+          </div>
+
+          <h6 class="fw-bold mb-2">Respuestas de la comunidad</h6>
+          <div id="lista-respuestas-foro" class="d-flex flex-column gap-2 mb-3"></div>
+
+          <form id="form-responder-foro" class="border-top-glass pt-3">
+            <label class="form-label small fw-bold">Añadir una respuesta</label>
+            <div class="input-group">
+              <input type="text" id="foro-nueva-respuesta" class="form-control glass-control" placeholder="Escribe tu aporte o respuesta..." required>
+              <button type="submit" class="btn btn-primary-custom px-4">Responder</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pie de Página Glass -->
+  <footer class="footer-glass py-4 mt-5">
+    <div class="container text-center text-secondary small">
+      <p class="mb-1 fw-bold text-dark">PortalEmpleo &bull; Daniel Echeverria & Marylin Orellana</p>
+      <p class="mb-0">Proyecto Final &bull; Desarrollo Web</p>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
